@@ -1,4 +1,5 @@
 use std::ops::*;
+use rand::{Rand, Rng};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3(pub f32, pub f32, pub f32);
@@ -63,6 +64,12 @@ impl Div<f32> for Vec3 {
     type Output = Vec3;
     fn div(self, r: f32) -> Vec3 {
         (1.0 / r) * self
+    }
+}
+
+impl Rand for Vec3 {
+    fn rand<R: Rng>(rng: &mut R) -> Vec3 {
+        Vec3(rng.gen(), rng.gen(), rng.gen())
     }
 }
 
