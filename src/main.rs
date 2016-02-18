@@ -1,8 +1,13 @@
+extern crate rand;
+
 mod vec;
 mod model;
+mod camera;
 
+use rand::random;
 use vec::{Vec3, Ray};
 use model::{HitTest, Sphere};
+use camera::Camera;
 
 fn color<T: HitTest>(r: Ray, model: &T) -> Vec3 {
     const WHITE: Vec3 = Vec3(1.0, 1.0, 1.0);
@@ -22,17 +27,11 @@ fn main() {
     const WIDTH: usize = 200;
     const HEIGHT: usize = 100;
 
+    const NSAMPLES: usize = 100;
+
     println!("P3");
     println!("{} {}", WIDTH, HEIGHT);
     println!("255");
-
-    // camera position (a point)
-    let origin = Vec3(0.0, 0.0, 1.0);
-
-    // direction vectors defining the view
-    let lower_left_corner = Vec3(-2.0, -1.5, -1.0);
-    let horizontal = Vec3(4.0, 0.0, 0.0);
-    let vertical = Vec3(0.0, 2.0, 0.0);
 
     // model
     let spheres: Vec<Box<HitTest>> = vec![
@@ -46,13 +45,20 @@ fn main() {
         })
     ];
 
+    let cam = Camera::new();
     for y in 0 .. HEIGHT {
         let j = HEIGHT - 1 - y;
         for i in 0 .. WIDTH {
-            let u = i as f32 / WIDTH as f32;
-            let v = j as f32 / HEIGHT as f32;
-            let r = Ray(origin, lower_left_corner + u * horizontal + v * vertical);
-            let rgb = color(r, &spheres).to_u8();
+            let mut col = Vec3(0.0, 0.0, 0.0);
+            for _ in 0 .. NSAMPLES {
+                let u = (i as f32 + random::<f32>()) / WIDTH as f32;
+                let v = (j as f32 + random::<f32>()) / HEIGHT as f32;
+
+                let r = cam.get_ray(u, v);
+                col = col + color(r, &spheres);
+            }
+            col = col / NSAMPLES as f32;
+            let rgb = col.to_u8();
             println!("{} {} {}", rgb[0], rgb[1], rgb[2]);
         }
     }
