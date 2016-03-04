@@ -60,6 +60,14 @@ impl Mul<Vec3> for f32 {
     }
 }
 
+/// Elementwise multiplication.
+impl Mul<Vec3> for Vec3 {
+    type Output = Vec3;
+    fn mul(self, v: Vec3) -> Vec3 {
+        Vec3(self.0 * v.0, self.1 * v.1, self.2 * v.2)
+    }
+}
+
 impl Div<f32> for Vec3 {
     type Output = Vec3;
     fn div(self, r: f32) -> Vec3 {

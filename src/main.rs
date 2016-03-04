@@ -6,30 +6,33 @@ mod camera;
 
 use rand::random;
 use vec::{Vec3, Ray};
-use model::{HitTest, Sphere};
+use model::{HitTest, Sphere, Lambertian, Metal};
 use camera::Camera;
 
-fn random_in_unit_sphere() -> Vec3 {
-    loop {
-        let p = 2.0 * random::<Vec3>() - Vec3(1.0, 1.0, 1.0);
-        if p.dot(p) < 1.0 {
-            return p;
-        }
-    }
-}
-
-fn color<T: HitTest>(r: Ray, model: &T) -> Vec3 {
+fn color<T: HitTest>(mut r: Ray, model: &T) -> Vec3 {
     const WHITE: Vec3 = Vec3(1.0, 1.0, 1.0);
     const SKY_BLUE: Vec3 = Vec3(0.5, 0.7, 1.0);
 
-    let unit_direction = r.direction().to_unit_vector();
-    if let Some(hit) = model.hit(&r) {
-        let target = hit.p + hit.normal + random_in_unit_sphere();
-        0.5 * color(Ray(hit.p, target - hit.p), model)
-    } else {
-        let t = 0.5 * (unit_direction.y() + 1.0);
-        (1.0 - t) * WHITE + t * SKY_BLUE
+    let mut attenuation = WHITE;
+    let mut depth = 0;
+    while let Some(hit) = model.hit(&r) {
+        let scattered = hit.material.scatter(&r, &hit);
+        attenuation = attenuation * scattered.color;
+        if let Some(bounce) = scattered.ray {
+            r = bounce;
+        } else {
+            break;
+        }
+
+        depth += 1;
+        if depth >= 50 {
+            break;
+        }
     }
+    let unit_direction = r.direction().to_unit_vector();
+    let t = 0.5 * (unit_direction.y() + 1.0);
+    let orig_color = (1.0 - t) * WHITE + t * SKY_BLUE;
+    orig_color * attenuation
 }
 
 fn main() {
@@ -46,11 +49,31 @@ fn main() {
     let spheres: Vec<Box<HitTest>> = vec![
         Box::new(Sphere {
             center: Vec3(0.0, 0.0, -1.0),
-            radius: 0.5
+            radius: 0.5,
+            material: Box::new(Lambertian {
+                albedo: Vec3(0.8, 0.3, 0.3)
+            })
         }),
         Box::new(Sphere {
             center: Vec3(0.0, -100.5, -1.0),
-            radius: 100.0
+            radius: 100.0,
+            material: Box::new(Lambertian {
+                albedo: Vec3(0.8, 0.8, 0.3)
+            })
+        }),
+        Box::new(Sphere {
+            center: Vec3(1.0, 0.0, -1.0),
+            radius: 0.5,
+            material: Box::new(Metal {
+                albedo: Vec3(0.8, 0.5, 0.2)
+            })
+        }),
+        Box::new(Sphere {
+            center: Vec3(-1.0, 0.0, -1.0),
+            radius: 0.5,
+            material: Box::new(Metal {
+                albedo: Vec3(0.8, 0.8, 0.8)
+            })
         })
     ];
 

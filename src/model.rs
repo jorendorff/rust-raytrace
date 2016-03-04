@@ -1,10 +1,12 @@
 use vec::{Vec3, Ray};
+use rand::random;
 
 #[derive(Clone, Copy)]
-pub struct Hit {
+pub struct Hit<'obj> {
     pub t: f32,
     pub p: Vec3,
-    pub normal: Vec3
+    pub normal: Vec3,
+    pub material: &'obj Material
 }
 
 pub trait HitTest {
@@ -13,11 +15,12 @@ pub trait HitTest {
 
 pub struct Sphere {
     pub center: Vec3,
-    pub radius: f32
+    pub radius: f32,
+    pub material: Box<Material>
 }
 
 impl HitTest for Sphere {
-    fn hit(&self, r: &Ray) -> Option<Hit> {
+    fn hit<'a>(&'a self, r: &Ray) -> Option<Hit<'a>> {
         let oc = r.origin() - self.center;
         let a = r.direction().dot(r.direction());
         let b = 2.0 * oc.dot(r.direction());
@@ -35,7 +38,8 @@ impl HitTest for Sphere {
                 Some(Hit {
                     t: t,
                     p: p,
-                    normal: (p - self.center) / self.radius
+                    normal: (p - self.center) / self.radius,
+                    material: &*self.material
                 })
             }
         } else {
@@ -58,5 +62,54 @@ impl HitTest for Vec<Box<HitTest>> {
             }
         }
         best
+    }
+}
+
+pub struct Scatter {
+    pub color: Vec3,
+    pub ray: Option<Ray>
+}
+
+pub trait Material {
+    fn scatter(&self, r_in: &Ray, rec: &Hit) -> Scatter;
+}
+
+pub struct Lambertian {
+    pub albedo: Vec3
+}
+
+fn random_in_unit_sphere() -> Vec3 {
+    loop {
+        let p = 2.0 * random::<Vec3>() - Vec3(1.0, 1.0, 1.0);
+        if p.dot(p) < 1.0 {
+            return p;
+        }
+    }
+}
+
+impl Material for Lambertian {
+    fn scatter(&self, _r_in: &Ray, hit: &Hit) -> Scatter {
+        let target = hit.p + hit.normal + random_in_unit_sphere();
+        Scatter {
+            color: self.albedo,
+            ray: Some(Ray(hit.p, target - hit.p))
+        }
+    }
+}
+
+fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+    v - 2.0 * v.dot(n) * n
+}
+
+pub struct Metal {
+    pub albedo: Vec3
+}
+
+impl Material for Metal {
+    fn scatter(&self, r_in: &Ray, hit: &Hit) -> Scatter {
+        Scatter {
+            color: self.albedo,
+            ray: Some(Ray(hit.p, reflect(r_in.direction(), hit.normal)))
+        }
     }
 }
