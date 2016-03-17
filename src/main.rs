@@ -1,4 +1,7 @@
 extern crate rand;
+extern crate lodepng;
+
+use lodepng::RGB;
 
 mod vec;
 mod model;
@@ -41,9 +44,7 @@ fn main() {
 
     const NSAMPLES: usize = 100;
 
-    println!("P3");
-    println!("{} {}", WIDTH, HEIGHT);
-    println!("255");
+    let mut pixels: Vec<RGB<u8>> = Vec::with_capacity(WIDTH * HEIGHT);
 
     // model
     let spheres: Vec<Box<HitTest>> = vec![
@@ -92,7 +93,13 @@ fn main() {
             col = col / NSAMPLES as f32;
             col = Vec3(col.x().sqrt(), col.y().sqrt(), col.z().sqrt());
             let rgb = col.to_u8();
-            println!("{} {} {}", rgb[0], rgb[1], rgb[2]);
+            pixels.push(RGB { r: rgb[0], g: rgb[1], b: rgb[2] });
         }
+    }
+
+    let filename = "pretty.png";
+    match lodepng::encode24_file(filename, &pixels, WIDTH, HEIGHT) {
+        Ok(()) => {}
+        Err(err) => println!("Error writing file \"{}\": {}", filename, err)
     }
 }
