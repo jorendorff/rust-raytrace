@@ -4,12 +4,14 @@ extern crate lodepng;
 use lodepng::RGB;
 
 mod vec;
+mod materials;
 mod model;
 mod camera;
 
 use rand::random;
 use vec::{Vec3, Ray};
-use model::{HitTest, Sphere, Lambertian, Metal};
+use model::{HitTest, Sphere};
+use materials::{Lambertian, Metal};
 use camera::Camera;
 
 fn color<T: HitTest>(mut r: Ray, model: &T) -> Vec3 {
