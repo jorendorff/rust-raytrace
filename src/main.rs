@@ -66,14 +66,16 @@ fn main() {
             center: Vec3(1.0, 0.0, -1.0),
             radius: 0.5,
             material: Box::new(Metal {
-                albedo: Vec3(0.8, 0.5, 0.2)
+                albedo: Vec3(0.8, 0.5, 0.2),
+                fuzz: 0.3,
             })
         }),
         Box::new(Sphere {
             center: Vec3(-1.0, 0.0, -1.0),
             radius: 0.5,
             material: Box::new(Metal {
-                albedo: Vec3(0.8, 0.8, 0.8)
+                albedo: Vec3(0.8, 0.8, 0.8),
+                fuzz: 1.0
             })
         })
     ];
