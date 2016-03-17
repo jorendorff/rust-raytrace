@@ -39,8 +39,8 @@ fn color<T: HitTest>(mut r: Ray, model: &T) -> Vec3 {
 }
 
 fn main() {
-    const WIDTH: usize = 200;
-    const HEIGHT: usize = 100;
+    const WIDTH: usize = 800;
+    const HEIGHT: usize = 400;
 
     const NSAMPLES: usize = 100;
 
