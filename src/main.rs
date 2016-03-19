@@ -78,6 +78,13 @@ fn main() {
             material: Box::new(Dielectric {
                 index: 1.5
             })
+        }),
+        Box::new(Sphere {
+            center: Vec3(-1.0, 0.0, -1.0),
+            radius: -0.45,
+            material: Box::new(Dielectric {
+                index: 1.5
+            })
         })
     ];
 
