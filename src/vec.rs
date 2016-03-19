@@ -83,10 +83,17 @@ impl Rand for Vec3 {
 
 
 #[derive(Clone, Copy, Debug)]
-pub struct Ray(pub Vec3, pub Vec3);
+pub struct Ray {
+    pub origin: Vec3,
+    pub direction: Vec3
+}
 
 impl Ray {
-    pub fn origin(&self) -> Vec3 { self.0 }
-    pub fn direction(&self) -> Vec3 { self.1 }
-    pub fn point_at_parameter(&self, t: f32) -> Vec3 { self.0 + t * self.1 }
+    pub fn new(o: Vec3, d: Vec3) -> Ray {
+        Ray { origin: o, direction: d }
+    }
+
+    pub fn point_at_parameter(&self, t: f32) -> Vec3 {
+        self.origin + t * self.direction
+    }
 }

@@ -34,7 +34,7 @@ fn color<T: HitTest>(mut r: Ray, model: &T) -> Vec3 {
             break;
         }
     }
-    let unit_direction = r.direction().to_unit_vector();
+    let unit_direction = r.direction.to_unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
     let orig_color = (1.0 - t) * WHITE + t * SKY_BLUE;
     orig_color * attenuation
