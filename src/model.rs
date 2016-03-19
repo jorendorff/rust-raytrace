@@ -19,6 +19,14 @@ pub struct Sphere {
     pub material: Box<Material>
 }
 
+/// Minimum distance a ray must travel before we'll consider a possible hit.
+///
+/// If we try to use 0 here, we get a really strange bug. When a ray hits an object
+/// and bounces, we'll sometimes register another hit on the same sphere,
+/// at some tiny but positive distance, due to floating-point error.
+///
+const T_MIN: f32 = 0.0001;
+
 impl HitTest for Sphere {
     fn hit<'a>(&'a self, r: &Ray) -> Option<Hit<'a>> {
         let oc = r.origin - self.center;
@@ -31,7 +39,7 @@ impl HitTest for Sphere {
             // Assuming r.origin is outside the sphere, we only need to consider
             // this hit and not the other hit (with the positive square root)
             let t = (-b - discriminant.sqrt()) * d;
-            if t <= 0.0 {
+            if t < T_MIN {
                 None
             } else {
                 let p = r.point_at_parameter(t);
