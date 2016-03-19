@@ -2,6 +2,7 @@ use rand::random;
 use vec::{Vec3, Ray};
 use model::Hit;
 
+#[derive(Clone, Copy, Debug)]
 pub struct Scatter {
     pub color: Vec3,
     pub ray: Option<Ray>
