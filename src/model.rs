@@ -31,28 +31,32 @@ impl HitTest for Sphere {
     fn hit<'a>(&'a self, r: &Ray) -> Option<Hit<'a>> {
         let oc = r.origin - self.center;
         let a = r.direction.dot(r.direction);
-        let b = 2.0 * oc.dot(r.direction);
+        let hb = oc.dot(r.direction);
         let c = oc.dot(oc) - self.radius * self.radius;
-        let discriminant = b * b - 4.0 * a * c;
+        let discriminant = hb * hb - a * c;
         if discriminant > 0.0 {
-            let d = 1.0 / (2.0 * a);
-            // Assuming r.origin is outside the sphere, we only need to consider
-            // this hit and not the other hit (with the positive square root)
-            let t = (-b - discriminant.sqrt()) * d;
-            if t < T_MIN {
-                None
-            } else {
+            let t = (-hb - discriminant.sqrt()) / a;
+            if t >= T_MIN {
                 let p = r.point_at_parameter(t);
-                Some(Hit {
+                return Some(Hit {
                     t: t,
                     p: p,
                     normal: (p - self.center) / self.radius,
                     material: &*self.material
-                })
+                });
             }
-        } else {
-            None
+            let t = (-hb + discriminant.sqrt()) / a;
+            if t >= T_MIN {
+                let p = r.point_at_parameter(t);
+                return Some(Hit {
+                    t: t,
+                    p: p,
+                    normal: (p - self.center) / self.radius,
+                    material: &*self.material
+                });
+            }
         }
+        None
     }
 }
 
