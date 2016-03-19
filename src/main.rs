@@ -11,7 +11,7 @@ mod camera;
 use rand::random;
 use vec::{Vec3, Ray};
 use model::{HitTest, Sphere};
-use materials::{Lambertian, Metal};
+use materials::{Lambertian, Metal, Dielectric};
 use camera::Camera;
 
 fn color<T: HitTest>(mut r: Ray, model: &T) -> Vec3 {
@@ -54,30 +54,29 @@ fn main() {
             center: Vec3(0.0, 0.0, -1.0),
             radius: 0.5,
             material: Box::new(Lambertian {
-                albedo: Vec3(0.8, 0.3, 0.3)
+                albedo: Vec3(0.1, 0.2, 0.5)
             })
         }),
         Box::new(Sphere {
             center: Vec3(0.0, -100.5, -1.0),
             radius: 100.0,
             material: Box::new(Lambertian {
-                albedo: Vec3(0.8, 0.8, 0.3)
+                albedo: Vec3(0.8, 0.8, 0.0)
             })
         }),
         Box::new(Sphere {
             center: Vec3(1.0, 0.0, -1.0),
             radius: 0.5,
             material: Box::new(Metal {
-                albedo: Vec3(0.8, 0.5, 0.2),
-                fuzz: 0.3,
+                albedo: Vec3(0.8, 0.6, 0.2),
+                fuzz: 0.0,
             })
         }),
         Box::new(Sphere {
             center: Vec3(-1.0, 0.0, -1.0),
             radius: 0.5,
-            material: Box::new(Metal {
-                albedo: Vec3(0.8, 0.8, 0.8),
-                fuzz: 1.0
+            material: Box::new(Dielectric {
+                index: 1.5
             })
         })
     ];
