@@ -88,10 +88,12 @@ fn main() {
         })
     ];
 
-    let lookfrom = Vec3(-2.0, 2.0, 1.0);
+    let lookfrom = Vec3(3.0, 3.0, 2.0);
     let lookat = Vec3(0.0, 0.0, -1.0);
     let vup = Vec3(0.0, 1.0, 0.0);
-    let cam = Camera::new(lookfrom, lookat, vup, 30.0, WIDTH as f32 / HEIGHT as f32);
+    let focus_distance = (lookfrom - Vec3(1.0, 0.0, -1.0)).length() - 0.4;
+    let aperture = 1.5;
+    let cam = Camera::new(lookfrom, lookat, vup, 20.0, WIDTH as f32 / HEIGHT as f32, aperture, focus_distance);
     for y in 0 .. HEIGHT {
         let j = HEIGHT - 1 - y;
         for i in 0 .. WIDTH {

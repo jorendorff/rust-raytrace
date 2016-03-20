@@ -1,5 +1,5 @@
 use rand::random;
-use vec::{Vec3, Ray};
+use vec::{Vec3, Ray, random_in_unit_sphere};
 use model::Hit;
 
 #[derive(Clone, Copy, Debug)]
@@ -14,15 +14,6 @@ pub trait Material {
 
 pub struct Lambertian {
     pub albedo: Vec3
-}
-
-fn random_in_unit_sphere() -> Vec3 {
-    loop {
-        let p = 2.0 * random::<Vec3>() - Vec3(1.0, 1.0, 1.0);
-        if p.dot(p) < 1.0 {
-            return p;
-        }
-    }
 }
 
 impl Material for Lambertian {
