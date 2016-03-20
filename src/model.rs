@@ -9,7 +9,7 @@ pub struct Hit<'obj> {
     pub material: &'obj Material
 }
 
-pub trait HitTest {
+pub trait Model {
     fn hit(&self, r: &Ray) -> Option<Hit>;
 }
 
@@ -27,7 +27,7 @@ pub struct Sphere {
 ///
 const T_MIN: f32 = 0.0001;
 
-impl HitTest for Sphere {
+impl Model for Sphere {
     fn hit<'a>(&'a self, r: &Ray) -> Option<Hit<'a>> {
         let oc = r.origin - self.center;
         let a = r.direction.dot(r.direction);
@@ -60,7 +60,7 @@ impl HitTest for Sphere {
     }
 }
 
-impl HitTest for Vec<Box<HitTest>> {
+impl Model for Vec<Box<Model>> {
     fn hit(&self, r: &Ray) -> Option<Hit> {
         let mut best = None;
         for child in self {

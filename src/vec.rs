@@ -23,7 +23,15 @@ impl Vec3 {
     pub fn length(self) -> f32 { self.squared_length().sqrt() }
 
     pub fn to_u8(&self) -> [u8;3] {
-        let u = |f| (f * 255.9) as i32 as u8;
+        fn u(f: f32) -> u8 {
+            if f < 0.0 {
+                0
+            } else if f >= 1.0 {
+                255
+            } else {
+                (f * 255.9) as i32 as u8
+            }
+        }
         [u(self.0), u(self.1), u(self.2)]
     }
 
