@@ -51,21 +51,21 @@ fn main() {
     // model
     let spheres: Vec<Box<HitTest>> = vec![
         Box::new(Sphere {
-            center: Vec3(0.0, 0.0, -2.0),
+            center: Vec3(0.0, 0.0, -1.0),
             radius: 0.5,
             material: Box::new(Lambertian {
                 albedo: Vec3(0.1, 0.2, 0.5)
             })
         }),
         Box::new(Sphere {
-            center: Vec3(0.0, -100.5, -2.0),
+            center: Vec3(0.0, -100.5, -1.0),
             radius: 100.0,
             material: Box::new(Lambertian {
                 albedo: Vec3(0.8, 0.8, 0.0)
             })
         }),
         Box::new(Sphere {
-            center: Vec3(1.0, 0.0, -2.0),
+            center: Vec3(1.0, 0.0, -1.0),
             radius: 0.5,
             material: Box::new(Metal {
                 albedo: Vec3(0.8, 0.6, 0.2),
@@ -73,14 +73,14 @@ fn main() {
             })
         }),
         Box::new(Sphere {
-            center: Vec3(-1.0, 0.0, -2.0),
+            center: Vec3(-1.0, 0.0, -1.0),
             radius: 0.5,
             material: Box::new(Dielectric {
                 index: 1.5
             })
         }),
         Box::new(Sphere {
-            center: Vec3(-1.0, 0.0, -2.0),
+            center: Vec3(-1.0, 0.0, -1.0),
             radius: -0.45,
             material: Box::new(Dielectric {
                 index: 1.5
@@ -88,7 +88,10 @@ fn main() {
         })
     ];
 
-    let cam = Camera::new(55.0, WIDTH as f32 / HEIGHT as f32);
+    let lookfrom = Vec3(-2.0, 2.0, 1.0);
+    let lookat = Vec3(0.0, 0.0, -1.0);
+    let vup = Vec3(0.0, 1.0, 0.0);
+    let cam = Camera::new(lookfrom, lookat, vup, 30.0, WIDTH as f32 / HEIGHT as f32);
     for y in 0 .. HEIGHT {
         let j = HEIGHT - 1 - y;
         for i in 0 .. WIDTH {
