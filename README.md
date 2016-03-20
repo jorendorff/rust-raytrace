@@ -6,4 +6,4 @@ by Peter Shirley.
 
 It's a wonderful book, and you can get it for $2.99 [on amazon](http://www.amazon.com/gp/product/B01B5AODD8/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B01B5AODD8&linkCode=as2&tag=inonwe09-20&linkId=OPNJXXJY2IBCMEGE).
 
-[[pretty.png]]
+![picture of some nice spheres](pretty.png)
