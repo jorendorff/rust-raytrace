@@ -1,11 +1,16 @@
-extern crate rand;
-extern crate lodepng;
+// Dependencies
+extern crate rand;     // generate random numbers
+extern crate lodepng;  // output PNG image files
 
-mod vec;
-mod materials;
-mod model;
-mod camera;
-mod render;
+// Ray-tracer modules
+mod vec;        // basic 3D vector math
+mod model;      // geometry of objects in the scene
+mod materials;  // reflective properties of surfaces
+mod camera;     // translate 2D pixel coordinates to 3D rays
+mod render;     // the core ray-tracing algorithm
+
+// The rest of the code in this file brings the pieces together
+// to render a scene made of a bunch of spheres.
 
 use rand::random;
 use vec::{Vec3, random_in_unit_disc};
@@ -13,32 +18,32 @@ use model::{Model, Sphere};
 use materials::{Material, Lambertian, Metal, Dielectric};
 use camera::Camera;
 
+/// Generate a Model containing a bunch of randomly placed spheres.
 fn random_scene() -> Box<Model> {
-    // model
     let mut spheres: Vec<Sphere> = vec![
         Sphere {
-            center: Vec3(0.0, -1000.0, 0.0),
+            center: Vec3(0.0, 0.0, -1000.0),
             radius: 1000.0,
             material: Box::new(Lambertian {
                 albedo: Vec3(1.0, 0.6, 0.5)
             })
         },
         Sphere {
-            center: Vec3(-4.0, 2.0, 0.0),
+            center: Vec3(-4.0, 0.0, 2.0),
             radius: 2.0,
             material: Box::new(Lambertian {
                 albedo: Vec3(0.6, 0.2, 0.2)
             })
         },
         Sphere {
-            center: Vec3(0.0, 2.0, 0.0),
+            center: Vec3(0.0, 0.0, 2.0),
             radius: 2.0,
             material: Box::new(Dielectric {
                 index: 1.5
             })
         },
         Sphere {
-            center: Vec3(4.0, 2.0, 0.0),
+            center: Vec3(4.0, 0.0, 2.0),
             radius: 2.0,
             material: Box::new(Metal {
                 albedo: Vec3(0.85, 0.9, 0.7),
@@ -67,8 +72,8 @@ fn random_scene() -> Box<Model> {
 
     for _ in 0..500 {
         let r = 0.4;
-        let Vec3(x, z, _) = random_in_unit_disc();
-        let pos = 20.0 * Vec3(x, 0.0, z) + Vec3(0.0, r, 0.0);
+        let Vec3(x, y, _) = random_in_unit_disc();
+        let pos = 20.0 * Vec3(x, y, 0.0) + Vec3(0.0, 0.0, r);
         if spheres.iter().all(|s| (s.center - pos).length() >= s.radius + r) {
             spheres.push(Sphere {
                 center: pos,
@@ -90,9 +95,9 @@ fn main() {
 
     let scene = random_scene();
 
-    let lookfrom = Vec3(16.0, 3.5, 12.0);
-    let lookat = Vec3(0.0, 1.0, 0.0);
-    let vup = Vec3(0.0, 1.0, 0.0);
+    let lookfrom = Vec3(20.0 * 0.47f32.cos(), 20.0 * 0.47f32.sin(), 3.0);
+    let lookat = Vec3(0.0, 0.0, 1.0);
+    let vup = Vec3(0.0, 0.0, 1.0);
     let focus_distance = (lookfrom - lookat).length();
     let aperture = 0.3;
     let camera = Camera::new(lookfrom, lookat, vup, 20.0, WIDTH as f32 / HEIGHT as f32,
